@@ -77,5 +77,5 @@ This is a proof of concept in our own simulator, not yet a deployment. The commu
 
 ## Team
 
-Habiba Djigo · Shafiya Kausar · Maheni Soumah · Ketsia Talotsing · Lucrece Leckat
+Habiba Djigo · Shafiya Kausar · Maheni Soumah · Ketsia Talotsing · Lucrece Leckat, 
 AIVANCITY — supervised by Dr. Etienne Mauffret.
