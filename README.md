@@ -50,8 +50,6 @@ src/ablations.py         # review follow-up: cap term + matched-weight ablation
 src/ablation_d.py        # review follow-up: candidate-count sweep
 notebook/SkyData_Notebook_Complet.ipynb   # simulator + experiments + demo
 demo/Interface_demo.html # interactive map (works offline, double-click)
-paper/Papier.pdf         # research paper (v3)
-paper/Survey_FL_MAS.pdf  # short survey: FL + MAS + their intersection
 RESULTS_v2.md            # all corrected results
 FICHE_SOUTENANCE.md      # defense cheat-sheet (FR)
 ```
