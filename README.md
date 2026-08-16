@@ -1,87 +1,81 @@
 # SkyData — Family-Aware Federated Coordination of Autonomous Data Replicas
 
-How do the replicas of one datum (a *family*) spread across hosts in
-[SkyData](https://hal.science/hal-04040588) — with no permanent central
-authority, no guaranteed communication between agents — and what does
-federated learning genuinely contribute?
+**A research project on how autonomous data copies spread themselves across a network — with no central controller — and what federated learning adds.**
 
-**Live demo:** [https://skydata-family-coordination.netlify.app/](https://skydata-family-coordination.netlify.app/interface_demo)
-*(click any replica to see its partial view of the network)*
+*AIVANCITY · Federated Learning in Multi-Agent Systems · supervised by Dr. Etienne Mauffret.*
 
-## Findings (v2 — after internal review and corrections)
+**▶ [Try the live demo](https://skydata-family-coordination.netlify.app/interface_demo)** — watch the copies migrate, and click any copy to see the limited slice of the network it can actually see.
 
-1. **Family-awareness is the decisive factor.** Selfish replicas cluster and
-   collide (dispersion 0.305, 2.13 collisions/family); any family-aware
-   strategy doubles dispersion (~0.62) and eliminates collisions.
-2. **SkyWorker coordination is a stability guarantee whose value grows with
-   the agents' view.** At d = 4 sampled candidates it is indistinguishable
-   from naive simultaneous decisions (a null result we report plainly); at
-   d = 8 it wins **20/20 paired seeds**, and with a full view the naive
-   strategy collapses (collisions return) while coordination stays flat and
-   collision-free. It also cuts migration cost ~4x (36 vs 154) at the price
-   of ~2,500 SkyWorker messages.
-3. **Federated learning halves discovery time.** Harbour quality is unknown a
-   priori; families estimate it from noisy local observations; a SkyWorker
-   aggregates estimates across reached families (federated averaging weighted
-   by observation counts — no raw data centralised). Federation reaches
-   estimation error < 0.05 in **7.8 rounds vs 14.1** for local-only learning
-   (better on 20/20 paired seeds at round 10); final placement matches
-   local-only, near the oracle bound. The value of federation is the **speed
-   of collective discovery**.
+---
 
-Full numbers: [`RESULTS_v2.md`](RESULTS_v2.md).
+## The problem
 
-## What changed in v2 (methodological note)
+[SkyData](https://hal.science/hal-04040588) is a data system with **no central manager**. Every piece of data is an autonomous agent — an **SKD** — that decides for itself which host (a **harbour**) to live on. There is no global map of the network, and no guarantee that any two agents can ever reach each other.
 
-An internal review of v1 found: (a) the family-dispersion weight differed
-between strategies, confounding the coordination comparison; (b) the capacity
-term rewarded congested harbours; (c) the first learning layer was circular
-(the update contained its own target). All three are fixed: weights equalised
-(fw = 0.70), `cap = 1 - saturation`, and the learning layer rebuilt as
-federated estimation of unknown harbour quality. All experiments re-run with
-paired seeds. Where v1's reading was wrong, we say so.
+Data is copied for safety, and the copies of one datum form a **family**. This creates the problem we study:
+
+> If every copy independently picks the most attractive harbour, they all pick the **same** one. Then a single failure destroys the whole family — and the copies were pointless.
+
+The copies need to **spread out**. But each one decides alone, sees only part of the network, and can't coordinate through any central authority.
+
+## Our idea
+
+A **temporary SkyWorker** — a helper agent that appears, coordinates one family so its copies move to *different* harbours, then disappears. It holds no permanent authority, which keeps SkyData's "no central controller" rule intact. On top of that, we add a **federated learning** layer so families can learn which harbours are good and share that knowledge without sharing raw data.
+
+## What we found
+
+1. **Being family-aware is what matters most.** Selfish copies cluster together and collide constantly. The moment copies simply try to avoid their siblings, they spread out twice as well and collisions disappear.
+
+2. **The SkyWorker is a stability guarantee whose value grows with how much each copy can see.** When copies only glance at a few harbours, coordination barely helps — random chance already keeps siblings apart (we report this null result honestly). But when copies can see more of the network, uncoordinated copies collapse back onto the same harbours, while the SkyWorker keeps them reliably spread. It also cuts the amount of movement by about **4×**, at the cost of some coordination messages.
+
+3. **Federated learning roughly halves the time to discover good harbours.** Each family learns harbour quality from its own noisy observations; the SkyWorker combines these estimates across families without ever centralising raw data. Families reach a good picture of the network about **twice as fast** together than alone. The benefit of federation here is the *speed* of collective discovery.
+
+Full numbers and tables: [`RESULTS_v2.md`](RESULTS_v2.md).
+
+## Try it yourself
+
+**The live demo** ([link above](https://skydata-family-coordination.netlify.app/interface_demo)) is the easiest way in — no install. Pick a strategy, watch the copies move, drag the reachability slider to limit what they can see, and click a copy to inspect its partial view.
+
+**Run the experiments:**
+
+```bash
+pip install numpy matplotlib
+cd code
+python run_all.py       # ~5 min; writes the figures + prints all result tables
+python ablations.py     # review follow-ups: scoring-term + matched-weight checks
+python ablation_d.py    # review follow-up: how coordination scales with the view
+```
+
+**Or open the notebook** — `notebook/SkyData_Notebook_Complet.ipynb` runs the simulator, experiments and demo end-to-end (works in Google Colab).
 
 ## Repository layout
 
 ```
-src/skydata_core.py      # simulator v2 (strategies + federated layer)
-src/run_all.py           # experiments E1-E4 (produces all figures)
-src/ablations.py         # review follow-up: cap term + matched-weight ablation
-src/ablation_d.py        # review follow-up: candidate-count sweep
-notebook/SkyData_Notebook_Complet.ipynb   # simulator + experiments + demo
-demo/Interface_demo.html # interactive map (works offline, double-click)
-RESULTS_v2.md            # all corrected results
-FICHE_SOUTENANCE.md      # defense cheat-sheet (FR)
+code/skydata_core.py     # the simulator: harbours, families, strategies, federated layer
+code/run_all.py          # main experiments — produces every figure and table
+code/ablations.py        # review follow-up: scoring-sign + matched-weight checks
+code/ablation_d.py       # review follow-up: candidate-count sweep
+notebook/                # the full notebook (simulator + experiments + demo)
+demo/Interface_demo.html # the interactive map (also runs offline — just double-click)
+figures/                 # generated figures
+RESULTS_v2.md            # all results in full
+FICHE_SOUTENANCE.md      # defense notes (French)
 ```
 
-## Reproduce
+*The research paper and the literature survey are being prepared for submission to a conference/journal and are not included in this repository yet.*
 
-```bash
-pip install numpy matplotlib
-cd src && python run_all.py     # ~5 min; writes fig_*.png + console tables
-python ablations.py             # review ablations A & B
-python ablation_d.py            # review ablation C
-```
+## How it relates to existing work
 
-## Positioning (short version)
+- **Versus gossip learning:** gossip spreads knowledge peer-to-peer and needs agents to reach one another — but SkyData guarantees no such path. The SkyWorker is a *mobile meeting point* that works even when families never meet directly.
+- **Versus federated learning with partial participation:** there, missing participants are a scheduling or sampling issue; here it's a fact of the environment — agents are mobile and may never come back.
 
-- **vs gossip learning** (Ormándi et al.; Hegedűs, Danner & Jelasity): gossip
-  averages peer-to-peer along a graph and needs peers to reach one another;
-  SkyData guarantees no path between agents. The SkyWorker is a *mobile
-  aggregation point*, native to SkyData, that works even when families never
-  meet.
-- **vs FL with partial participation** (Wang & Ji, NeurIPS 2022; Cho, Wang &
-  Joshi 2020): there, participation is a sampling/availability matter; here it
-  is a property of the environment — participants are mobile and never
-  guaranteed to return.
+## Scope and honesty
 
-## Scope
+This is a proof of concept in our own simulator, not yet a deployment. The communication model is simplified and harbour quality is static for now. We also did an internal review of our first version and corrected three real flaws before publishing these results — the corrected story is the one above. Details of what changed are in [`RESULTS_v2.md`](RESULTS_v2.md).
 
-Proof of concept in our own simulator. The message layer is coarse; harbour
-quality is static. Next steps: port to JADE/Jason; dynamic harbour conditions
-(where federated discovery speed should matter most).
+**Next steps:** port the mechanism to the JADE/Jason agent platform, and test it with harbours whose quality changes over time — where fast federated discovery should matter most.
 
 ## Team
 
-AIVANCITY research project, supervised by Dr. Etienne Mauffret.
-Habiba Djigo · Shafiya Kausar · Maheni Soumah · Ketsia Talotsing · Lucrece Leckat 
+Habiba Djigo · Shafiya Kausar · Maheni Soumah · Ketsia Talotsing · Lucrece Leckat
+AIVANCITY — supervised by Dr. Etienne Mauffret.
