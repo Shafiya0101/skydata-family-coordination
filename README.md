@@ -86,4 +86,4 @@ quality is static. Next steps: port to JADE/Jason; dynamic harbour conditions
 ## Team
 
 AIVANCITY research project, supervised by Dr. Etienne Mauffret.
-Habiba Djigo · Ketsia Talotsing · Lucrece Leckat · Maheni Soumah · Shafiya Kausar
+Habiba Djigo · Shafiya Kausar · Maheni Soumah · Ketsia Talotsing · Lucrece Leckat 
