@@ -11,13 +11,13 @@ simulateur contrôlé, après avoir audité et corrigé notre propre implémenta
    et collisions (2.1/famille) ; family-aware = dispersion doublée, 0 collision.
 2. **La coordination par SkyWorker est une garantie de stabilité** dont la
    valeur croît avec la vue des agents : équivalente au naïf quand la vue est
-   étroite (résultat nul assumé), décisive quand la vue s'élargit (20/20 seeds
+   étroite (résultat nul assumé), décisive quand la vue s'élargit (52/60 seeds
    à d=8), toujours sans collision, et 4x moins chère en coût de migration.
 3. **Le Federated Learning est réel et quantifié** : la qualité des harbours
    est inconnue, chaque famille l'estime par observations locales bruitées, et
    le SkyWorker agrège les estimations (FedAvg pondéré) sans centraliser les
    données. La fédération divise par ~2 le temps de découverte collective
-   (erreur<0.05 en 7.8 tours vs 14.1 en local ; meilleur sur 20/20 seeds au
+   (erreur<0.05 en 8 tours vs 14 en local ; meilleur sur 60/60 seeds au
    tour 10).
 
 ## Les chiffres à connaître par cœur
@@ -26,11 +26,11 @@ simulateur contrôlé, après avoir audité et corrigé notre propre implémenta
 |---|---|
 | Selfish : dispersion / collisions | 0.305 / 2.13 |
 | Family-aware : dispersion / collisions | ~0.62 / 0.00 |
-| d=8 : Coordonné bat Naïf | 20/20 seeds |
+| d=8 : Coordonné bat Naïf | 52/60 seeds |
 | d=all : Naïf s'effondre | 0.570, collisions 0.44 |
-| Coût migration : Naïf vs Coordonné | 154 vs 36 (~4x) |
+| Coût migration : Naïf vs Coordonné | 135 vs 36 (~4x) |
 | Prix : messages SKW | ~2 500 |
-| FL : erreur<0.05 | 7.8 tours (fédéré) vs 14.1 (local) |
+| FL : erreur<0.05 | 8 tours (fédéré) vs 14 (local) |
 | FL : placement final | 0.682 (≈ oracle 0.690) |
 
 ## Questions probables et réponses
@@ -52,7 +52,7 @@ pas une faiblesse.
 À d=4, oui — résultat nul que nous assumons (notre première lecture était
 faussée par des poids inégaux ; nous l'avons corrigé nous-mêmes). Mais à vue
 large, le naïf s'effondre (collisions de re-synchronisation) et le coordonné
-reste stable : 20/20 seeds à d=8. Plus le bonus inattendu : 4x moins de coût de
+reste stable : 52/60 seeds à d=8. Plus le bonus inattendu : 4x moins de coût de
 migration. La coordination est une assurance de stabilité.
 
 **« Pourquoi un simulateur et pas JADE ? »**

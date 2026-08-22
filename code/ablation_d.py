@@ -6,7 +6,7 @@ Tout est a poids egalise (fw=0.70) et cap corrige (1 - saturation).
 """
 import numpy as np
 import skydata_core as sc
-from skydata_core import SkyWorld, CoordinatedFamilyAwarePoC, metrics, family_positions
+from skydata_core import SkyWorld, CoordinatedPoC, metrics, family_positions
 
 SEEDS = 20
 ROUNDS = 80
@@ -14,7 +14,7 @@ REACH = 0.65
 FW = 0.70
 
 
-def patched_score(world, skd, cand, family_future, family_weight):
+def patched_score(world, skd, cand, family_future, family_weight, green_estimate=None, learn_family=None):
     h = world.harbours[cand]
     if h.free <= 0 and cand != skd.harbour:
         return -1e9

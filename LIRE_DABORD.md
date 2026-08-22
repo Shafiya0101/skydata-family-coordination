@@ -8,11 +8,11 @@ Encadrant : Dr. Etienne Mauffret
 1. **La conscience familiale est le facteur décisif** : égoïste = regroupement
    + collisions ; family-aware = dispersion doublée, 0 collision.
 2. **La coordination SkyWorker = une garantie de stabilité** dont la valeur
-   croît avec la vue des agents (20/20 seeds à d=8 ; à vue étroite, résultat
+   croît avec la vue des agents (52/60 seeds à d=8 ; à vue étroite, résultat
    nul assumé) + coût de migration divisé par 4.
 3. **Le Federated Learning divise par 2 le temps de découverte** : la qualité
    des harbours est inconnue, les familles l'estiment localement, le SkyWorker
-   agrège (FedAvg pondéré) sans centraliser — erreur<0.05 en 7.8 tours vs 14.1.
+   agrège (FedAvg pondéré) sans centraliser — erreur<0.05 en 8 tours vs 14.
 
 ## Les fichiers
 
@@ -23,7 +23,7 @@ Encadrant : Dr. Etienne Mauffret
 - `Presentation.pptx` — le PowerPoint (nouveaux chiffres, récit à 3 résultats)
 - `SkyData_Notebook_Complet.ipynb` — simulateur v2 + expériences + démo,
   testé de bout en bout (Colab : Importer → Tout exécuter, ~5-8 min)
-- `Interface_demo.html` — la démo seule (double-clic) 
+- `Interface_demo.html` — la démo seule (double-clic) ; `_rose` = version fun
 - `RESULTS_v2.md` — tous les chiffres ; `FICHE_SOUTENANCE.md` — le récit,
   les chiffres à connaître, les réponses aux questions pièges
 - `README_GITHUB.md` — à mettre comme README du repo

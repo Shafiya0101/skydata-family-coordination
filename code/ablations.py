@@ -5,8 +5,8 @@ Memes seeds partout pour une comparaison appariee.
 """
 import numpy as np
 import skydata_core as sc
-from skydata_core import (SkyWorld, SelfishPowerOfChoice, NaiveFamilyAwarePoC,
-                          CoordinatedFamilyAwarePoC, metrics)
+from skydata_core import (SkyWorld, SelfishPoC, NaivePoC,
+                          CoordinatedPoC, metrics)
 
 SEEDS = 20
 ROUNDS = 80
@@ -16,7 +16,7 @@ REACH = 0.65
 def run(strategy, seed, cap_mode):
     # patch du terme cap selon le mode teste
     orig = sc.candidate_score
-    def patched(world, skd, cand, family_future, family_weight):
+    def patched(world, skd, cand, family_future, family_weight, green_estimate=None, learn_family=None):
         h = world.harbours[cand]
         if h.free <= 0 and cand != skd.harbour:
             return -1e9
@@ -39,7 +39,7 @@ def run(strategy, seed, cap_mode):
         sc.candidate_score = orig
 
 
-class NaiveFW(NaiveFamilyAwarePoC):
+class NaiveFW(NaivePoC):
     """Naive avec un poids familial parametrable (pour l'ablation matched-fw)."""
     def __init__(self, fw):
         self.fw = fw
@@ -78,9 +78,9 @@ for mode in ["saturation", "inverse"]:
     label = "cap = saturation (actuel)" if mode == "saturation" else "cap = 1 - saturation (corrige)"
     print(f"\n--- {label} ---")
     rows = []
-    for name, mk in [("Selfish", lambda: SelfishPowerOfChoice()),
+    for name, mk in [("Selfish", lambda: SelfishPoC()),
                      ("Naive fw=0.55", lambda: NaiveFW(0.55)),
-                     ("Coordinated fw=0.70", lambda: CoordinatedFamilyAwarePoC())]:
+                     ("Coordinated fw=0.70", lambda: CoordinatedPoC())]:
         res = [run(mk(), seed, mode) for seed in range(SEEDS)]
         rows.append((name, res))
     table(rows)
@@ -91,7 +91,7 @@ print("ABLATION B - poids egalise (cap corrige) : la coordination seule")
 print("=" * 62)
 rows = []
 for name, mk in [("Naive fw=0.70 (matched)", lambda: NaiveFW(0.70)),
-                 ("Coordinated fw=0.70", lambda: CoordinatedFamilyAwarePoC())]:
+                 ("Coordinated fw=0.70", lambda: CoordinatedPoC())]:
     res = [run(mk(), seed, "inverse") for seed in range(SEEDS)]
     rows.append((name, res))
 table(rows)
@@ -99,7 +99,7 @@ table(rows)
 # difference appariee par seed pour etre rigoureux
 print("\nDifference appariee (Coordinated - Naive matched), par seed :")
 n_res = [run(NaiveFW(0.70), s, "inverse") for s in range(SEEDS)]
-c_res = [run(CoordinatedFamilyAwarePoC(), s, "inverse") for s in range(SEEDS)]
+c_res = [run(CoordinatedPoC(), s, "inverse") for s in range(SEEDS)]
 diffs = [c['mean_dispersion'] - n['mean_dispersion'] for c, n in zip(c_res, n_res)]
 w_diffs = [c['worst_family_dispersion'] - n['worst_family_dispersion'] for c, n in zip(c_res, n_res)]
 print(f"  dispersion : moyenne {np.mean(diffs):+.4f}, ecart-type {np.std(diffs):.4f}, "
