@@ -5,7 +5,7 @@ How do the replicas of one datum (a *family*) spread across hosts in
 authority, no guaranteed communication between agents — and what does
 federated learning genuinely contribute?
 
-**Live demo:** https://skydata-family-coordination.netlify.app/
+**Live demo:** https://skydata-family-coordination.netlify.app/interface_demo
 *(click any replica to see its partial view of the network)*
 
 ## Findings (v2 — after internal review and corrections)
